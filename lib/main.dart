@@ -1,17 +1,30 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:home_widget/home_widget.dart';
 
-import 'core/app_export.dart';
+import 'screens/Home.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-  ]).then((value) {
-    Logger.init(kReleaseMode ? LogMode.live : LogMode.debug);
-    runApp(MyApp());
-  });
+  await GetStorage.init();
+  HomeWidget.registerBackgroundCallback(backgroundCallback);
+  runApp(MyApp());
+}
+
+// Called when Doing Background Work initiated from Widget
+backgroundCallback(Uri? uri) async {
+  int _counter = 0;
+  if (uri!.host == 'updatecounter') {
+    await HomeWidget.getWidgetData<int>('_counter', defaultValue: 0)
+        .then((value) {
+      _counter = value!;
+      _counter++;
+    });
+    await HomeWidget.saveWidgetData<int>('_counter', _counter);
+    await HomeWidget.updateWidget(
+        name: 'AppWidgetProvider', iOSName: 'AppWidgetProvider');
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -20,14 +33,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: theme,
-      translations: AppLocalization(),
-      locale: Get.deviceLocale, //for setting localization strings
-      fallbackLocale: Locale('en', 'US'),
-      title: 'umesh_kumar_s_application1',
-      initialBinding: InitialBindings(),
-      initialRoute: AppRoutes.initialRoute,
-      getPages: AppRoutes.pages,
+      home: const Home(),
     );
   }
 }

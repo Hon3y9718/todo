@@ -1,28 +1,31 @@
-name: umesh_kumar_s_application1
+name: todo
 description: A new Flutter project.
 version: 1.0.0+1
-environment: 
+environment:
   sdk: '>=2.12.0 <3.0.0'
-dependencies: 
-  flutter: 
-    sdk: flutter
-  get: ^4.6.5
-  connectivity_plus: ^2.3.6
-  shared_preferences: ^2.0.15
+dependencies:
   cached_network_image: ^3.2.1
-  flutter_svg: ^1.1.6
-  intl: ^0.18.0
-dev_dependencies: 
-  flutter_test: 
+  connectivity_plus: ^2.3.6
+  flutter:
     sdk: flutter
-flutter: 
+  flutter_svg: ^1.1.6
+  get: ^4.6.5
+  get_storage: null
+  google_mobile_ads: ^3.1.0
+  home_widget: ^0.3.0
+  intl: ^0.18.0
+  shared_preferences: ^2.0.15
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+flutter:
   uses-material-design: true
-  assets: 
+  assets:
     - assets/
     - assets/images/
-  fonts: 
+  fonts:
     - family: Inter
-      fonts: 
+      fonts:
         - asset: assets/fonts/InterRegular.ttf
           weight: 400
         - asset: assets/fonts/InterSemiBold.ttf
