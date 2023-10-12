@@ -5,9 +5,11 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
+import android.os.Build
 import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.RemoteViews
+import androidx.annotation.RequiresApi
 import es.antonborri.home_widget.HomeWidgetBackgroundIntent
 import es.antonborri.home_widget.HomeWidgetLaunchIntent
 import es.antonborri.home_widget.HomeWidgetProvider
@@ -16,6 +18,7 @@ import org.json.JSONObject
 
 
 class AppWidgetProvider : HomeWidgetProvider() {
+    @RequiresApi(Build.VERSION_CODES.Q)
     @SuppressLint("ResourceType")
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray, widgetData: SharedPreferences) {
         appWidgetIds.forEach { widgetId ->
@@ -29,6 +32,18 @@ class AppWidgetProvider : HomeWidgetProvider() {
                 val counter = widgetData.getInt("_counter", 0)
 
                 var taskList = widgetData.getString("_tasks", "null")
+
+                fun changeImage(): RemoteViews.RemoteResponse {
+                    var isDone = false
+                    if(isDone){
+                        setImageViewResource(R.id.task1Image, R.drawable.done)
+                        isDone = false
+                    } else {
+                        setImageViewResource(R.id.task1Image, R.drawable.undone)
+                        isDone = true
+                    }
+                    return RemoteViews.RemoteResponse()
+                }
 
                 if (taskList == "null") {
                     val noTaskText = "You don't have any task!"
@@ -69,6 +84,13 @@ class AppWidgetProvider : HomeWidgetProvider() {
                                     } else {
                                         setImageViewResource(R.id.task1Image, R.drawable.undone)
                                     }
+
+                                    // Pending intent to update counter on button click
+                                    val taskIntent = HomeWidgetBackgroundIntent.getBroadcast(context,
+                                        Uri.parse("myAppWidget://tasks?index=$i&isDone=${isDone}"))
+                                    setOnClickPendingIntent(R.id.task1Image, taskIntent)
+                                    setOnClickPendingIntent(R.id.task1, taskIntent)
+
                                 } else if (count == 1) {
                                     setTextViewText(R.id.task2, task.get("task").toString())
                                     val isDone = task.get("isDone")
@@ -77,6 +99,12 @@ class AppWidgetProvider : HomeWidgetProvider() {
                                     } else {
                                         setImageViewResource(R.id.task2Image, R.drawable.undone)
                                     }
+
+                                    // Pending intent to update counter on button click
+                                    val taskIntent = HomeWidgetBackgroundIntent.getBroadcast(context,
+                                        Uri.parse("myAppWidget://tasks?index=$i&isDone=${isDone}"))
+                                    setOnClickPendingIntent(R.id.task2Image, taskIntent)
+                                    setOnClickPendingIntent(R.id.task2, taskIntent)
                                 } else if (count == 2) {
                                     setTextViewText(R.id.task3, task.get("task").toString())
                                     val isDone = task.get("isDone")
@@ -85,6 +113,12 @@ class AppWidgetProvider : HomeWidgetProvider() {
                                     } else {
                                         setImageViewResource(R.id.task3Image, R.drawable.undone)
                                     }
+
+                                    // Pending intent to update counter on button click
+                                    val taskIntent = HomeWidgetBackgroundIntent.getBroadcast(context,
+                                        Uri.parse("myAppWidget://tasks?index=$i&isDone=${isDone}"))
+                                    setOnClickPendingIntent(R.id.task3Image, taskIntent)
+                                    setOnClickPendingIntent(R.id.task3, taskIntent)
                                 } else {
                                     setTextViewText(R.id.task4, task.get("task").toString())
                                     val isDone = task.get("isDone")
@@ -93,6 +127,13 @@ class AppWidgetProvider : HomeWidgetProvider() {
                                     } else {
                                         setImageViewResource(R.id.task4Image, R.drawable.undone)
                                     }
+
+                                    // Pending intent to update counter on button click
+                                    val taskIntent = HomeWidgetBackgroundIntent.getBroadcast(context,
+                                        Uri.parse("myAppWidget://tasks?index=$i&isDone=${isDone}"))
+
+                                    setOnClickPendingIntent(R.id.task4Image, taskIntent)
+                                    setOnClickPendingIntent(R.id.task4, taskIntent)
                                 }
                                 count++
                             }

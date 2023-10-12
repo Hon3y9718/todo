@@ -34,6 +34,7 @@ class _HomeState extends State<Home> {
 
   getData() {
     var data = db.read("list");
+    print("GetData: $data");
     if (data == null) {
       list = [];
     } else {
@@ -50,6 +51,13 @@ class _HomeState extends State<Home> {
     await HomeWidget.getWidgetData<int>('_counter', defaultValue: 0)
         .then((value) {
       _counter = value!;
+    });
+
+    await HomeWidget.getWidgetData<String>("_tasks", defaultValue: "null")
+        .then((val) {
+      if (val != "null") {
+        print("Tasks from Widget: $val");
+      }
     });
     setState(() {});
   }
@@ -113,53 +121,34 @@ class _HomeState extends State<Home> {
       ),
       bottomNavigationBar: _bannerAd != null
           ? SizedBox(
-            width: _bannerAd!.size.width.toDouble(),
-            height: _bannerAd!.size.height.toDouble(),
-            child: AdWidget(ad: _bannerAd!),
-          )
+              width: _bannerAd!.size.width.toDouble(),
+              height: _bannerAd!.size.height.toDouble(),
+              child: AdWidget(ad: _bannerAd!),
+            )
           : Container(),
-      body: ListView.separated(
-        itemCount: list.length + 1,
-        itemBuilder: (context, index) {
-          if (index < list.length) {
-            var task = list[index];
-            bool? isDone = task["isDone"] as bool;
-            return ListTile(
-              leading: Transform.scale(
-                scale: 1.3,
-                child: Checkbox(
-                  value: isDone,
-                  onChanged: (value) {
-                    setState(() {
-                      list[index]['isDone'] = value!;
-                      print(list);
-                      saveData();
-                      updateAppWidget();
-                    });
-                  },
-                  side: MaterialStateBorderSide.resolveWith(
-                    (states) => BorderSide(width: 1.0, color: Pallete.primary),
-                  ),
-                  activeColor: Pallete.primary,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(7)),
-                ),
-              ),
-              title: Text(
-                "${task["task"]}",
-                style: TextStyle(
-                    fontSize: 16,
-                    decoration: isDone! ? TextDecoration.lineThrough : null,
-                    color: isDone! ? Pallete.primary : null),
-              ),
-            );
-          } else {
-            return ListTile(
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await getData();
+        },
+        child: ListView.separated(
+          itemCount: list.length + 1,
+          itemBuilder: (context, index) {
+            if (index < list.length) {
+              var task = list[index];
+              bool? isDone = task["isDone"] as bool;
+              return ListTile(
                 leading: Transform.scale(
                   scale: 1.3,
                   child: Checkbox(
-                    value: false,
-                    onChanged: (value) {},
+                    value: isDone,
+                    onChanged: (value) {
+                      setState(() {
+                        list[index]['isDone'] = value!;
+                        print(list);
+                        saveData();
+                        updateAppWidget();
+                      });
+                    },
                     side: MaterialStateBorderSide.resolveWith(
                       (states) =>
                           BorderSide(width: 1.0, color: Pallete.primary),
@@ -169,33 +158,58 @@ class _HomeState extends State<Home> {
                         borderRadius: BorderRadius.circular(7)),
                   ),
                 ),
-                title: TextField(
-                  onSubmitted: (val) {
-                    setState(() {
-                      list.add({"task": val, "isDone": false});
-                      saveData();
-                      updateAppWidget();
-                    });
-                  },
-                  decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: "Click & Write here",
-                      hintStyle:
-                          TextStyle(color: Color.fromARGB(255, 97, 147, 246))),
-                ));
-          }
-        },
-        separatorBuilder: (context, index) {
-          return SizedBox(
-            width: Get.width * 0.6,
-            child: Divider(
-              indent: 10,
-              endIndent: 10,
-              height: 5,
-              color: Pallete.primary,
-            ),
-          );
-        },
+                title: Text(
+                  "${task["task"]}",
+                  style: TextStyle(
+                      fontSize: 16,
+                      decoration: isDone! ? TextDecoration.lineThrough : null,
+                      color: isDone! ? Pallete.primary : null),
+                ),
+              );
+            } else {
+              return ListTile(
+                  leading: Transform.scale(
+                    scale: 1.3,
+                    child: Checkbox(
+                      value: false,
+                      onChanged: (value) {},
+                      side: MaterialStateBorderSide.resolveWith(
+                        (states) =>
+                            BorderSide(width: 1.0, color: Pallete.primary),
+                      ),
+                      activeColor: Pallete.primary,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(7)),
+                    ),
+                  ),
+                  title: TextField(
+                    onSubmitted: (val) {
+                      setState(() {
+                        list.add({"task": val, "isDone": false});
+                        saveData();
+                        updateAppWidget();
+                      });
+                    },
+                    decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Click & Write here",
+                        hintStyle: TextStyle(
+                            color: Color.fromARGB(255, 97, 147, 246))),
+                  ));
+            }
+          },
+          separatorBuilder: (context, index) {
+            return SizedBox(
+              width: Get.width * 0.6,
+              child: Divider(
+                indent: 10,
+                endIndent: 10,
+                height: 5,
+                color: Pallete.primary,
+              ),
+            );
+          },
+        ),
       ),
     );
   }
