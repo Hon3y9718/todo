@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:todo/Utils/Colors.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Alerts {
   clearAllDialog(onYes) {
@@ -71,6 +72,12 @@ class Alerts {
         });
   }
 
+  Future<void> _launchUrl(url) async {
+    if (!await launchUrl(Uri.parse(url))) {
+      throw Exception('Could not launch $url');
+    }
+  }
+
   donateDialog(onTap) {
     return showDialog(
         context: Get.context!,
@@ -89,7 +96,7 @@ class Alerts {
               ],
             ),
             content: Container(
-              height: Get.height * 0.16,
+              height: Get.height * 0.20,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -116,6 +123,19 @@ class Alerts {
                   Text(
                     "UPI ID: devanshkumar@okhdfcbank",
                     style: TextStyle(color: Pallete.primary),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      _launchUrl(
+                          "https://www.freeprivacypolicy.com/live/605511f2-2c28-4bc1-8893-08273d98c16d");
+                    },
+                    child: Text(
+                      "Privacy Policy",
+                      style: TextStyle(color: Pallete.primary),
+                    ),
                   ),
                 ],
               ),

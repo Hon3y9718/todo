@@ -23,7 +23,7 @@ backgroundCallback(Uri? uri) async {
     await HomeWidget.getWidgetData<String>('_tasks', defaultValue: "null")
         .then((value) async {
       if (value != "null") {
-        var json = jsonDecode(value!);
+        var json = jsonDecode(value!) as List;
 
         var index = int.parse(uri!.queryParameters["index"]!);
         var isDone = uri!.queryParameters["isDone"];
@@ -32,6 +32,7 @@ backgroundCallback(Uri? uri) async {
           json[index]["isDone"] = false;
         } else {
           json[index]["isDone"] = true;
+          json.removeAt(index);
         }
         db.write("list", json);
         print("WidgetData: $json");

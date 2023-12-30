@@ -114,8 +114,7 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="foregroundLayerName" value="undone_task" />
-                                      <entry key="outputName" value="undone" />
+                                      <entry key="outputName" value="undone_task" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -308,6 +307,11 @@
                 </map>
               </option>
             </PersistentState>
+          </value>
+        </entry>
+        <entry key="vectorWizard">
+          <value>
+            <PersistentState />
           </value>
         </entry>
       </map>
